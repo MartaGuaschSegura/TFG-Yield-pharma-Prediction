@@ -25,7 +25,7 @@ Estructura del repositori
     - preprocessament.py ← Càrrega + neteja + preprocessament
   - figures/ ← Figures generades automàticament pel codi
   - .gitignore
-  - requirements.txt
+  - requirements.txt (pendent de veure si ho faig)
   - README.md
     
 Dades
