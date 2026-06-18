@@ -7,9 +7,9 @@ Construir un model de Machine Learning capaç de predir el rendiment (Yield, %) 
 Les dades provenen de l'Electronic Batch Record (EBR) implementat a l'empresa.
 
 Estat actual del projecte
-- Càrrega del dataset
-- Neteja i preprocessament (conversió de dates a durades, separació de l'identificador de lot)
-- Anàlisi exploratòria de dades (EDA)
+- Càrrega del dataset (OK)
+- Neteja i preprocessament (conversió de dates a durades, separació de l'identificador de lot) (OK)
+- Anàlisi exploratòria de dades (EDA) (OK)
 - Preparació per a Machine Learning (split 80/10/10, imputació, estandardització)
 - Entrenament i avaluació de models de regressió
 - Optimització d'hiperparàmetres
