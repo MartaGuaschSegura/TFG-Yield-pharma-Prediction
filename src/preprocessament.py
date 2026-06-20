@@ -1,4 +1,4 @@
-#FASE ACTUAL: Càrrega del dataset + Neteja i preprocessament
+#FASE 1: Càrrega del dataset + Neteja i preprocessament
 # (les fases d'EDA, modelització, optimització i interpretabilitat s'aniran
 #  afegint en propers commits)
 import os 
@@ -138,7 +138,7 @@ non_numeric = df_clean.select_dtypes(exclude=[np.number]).columns.tolist()
 if non_numeric:
     print(f"\n[AVÍS] Columnes no numèriques inesperades, revisar: {non_numeric}")
 else:
-    print("\nTotes les columnes restants són numèriques. ✓")
+    print("\nTotes les columnes restants són numèriques. OK")
 
 print(f"\nDataset net final: {df_clean.shape[0]} lots x {df_clean.shape[1]} variables")
 print(f"(+ {len(batch_ids)} identificadors de lot guardats apart per a traçabilitat)")
