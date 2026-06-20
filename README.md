@@ -10,8 +10,8 @@ Estat actual del projecte
 - Càrrega del dataset (OK)
 - Neteja i preprocessament (conversió de dates a durades, separació de l'identificador de lot) (OK)
 - Anàlisi exploratòria de dades (EDA) (OK)
-- Preparació per a Machine Learning (split 80/10/10, imputació, estandardització)
-- Entrenament i avaluació de models de regressió
+- Preparació per a Machine Learning (split 80/10/10, imputació, estandardització) OK
+- Entrenament i avaluació de models de regressió OK
 - Optimització d'hiperparàmetres
 - Interpretabilitat del model (Feature Importance / Permutation Importance)
 - Visualitzacions finals
@@ -22,7 +22,10 @@ Estructura del repositori
     - raw/ ← CSV original de l'EBR (NO es puja, veure .gitignore)
     - processed/  ← Dades netes generades pel codi (NO es puja)
   - src/
+    - eda.py ← Anàlisi exploratòria
     - preprocessament.py ← Càrrega + neteja + preprocessament
+    - preparacio_ml.py ← Preparació per a ML
+    - entrenament_models.py ← Entrenament i avaluació de 6 models de regressió amb 5-fold CV
   - figures/ ← Figures generades automàticament pel codi
   - .gitignore
   - requirements.txt (pendent de veure si ho faig)
