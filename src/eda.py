@@ -5,7 +5,7 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Crea la carpeta de figures si encara no existeix
+# Crea la carpeta de figures
 os.makedirs("figures", exist_ok=True)
 
 # Configuració visual dels gràfics
