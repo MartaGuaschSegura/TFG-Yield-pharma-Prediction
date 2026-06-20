@@ -146,7 +146,7 @@ axes[2].set_title("RMSE – Validation Set")
 axes[2].set_xlabel("RMSE (%)")
 
 plt.suptitle("Comparació de models – Validation Set\n"
-             "(el millor en verd)", fontsize=12)
+             "(el millor en color coral)", fontsize=12)
 plt.tight_layout()
 plt.savefig("figures/04_comparativa_models.png", dpi=150)
 plt.show()
