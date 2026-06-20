@@ -15,7 +15,7 @@ sns.set_style("whitegrid")
 
 RANDOM_STATE = 42
 
-# 1. CÀRREGA DEL DATASET NET
+# 2.1. CÀRREGA DEL DATASET NET
 #-----------------------------------------------------------------------
 # Aquest script parteix del fitxer ja netejat per preprocessament.py
 # (dates convertides a durades, identificador OF separat, columnes amb
@@ -33,7 +33,7 @@ df = pd.read_csv(CSV_PATH)
 print(f"\nDimensions: {df.shape[0]} lots x {df.shape[1]} variables")
 print(f"Variable objectiu: {TARGET_COL}")
 
-# 2. ANÀLISI EXPLORATÒRIA DE DADES (EDA)
+# 2.2. ANÀLISI EXPLORATÒRIA DE DADES (EDA)
 #-----------------------------------------------------------------------
 print("\n" + "=" * 60)
 print("2. ANÀLISI EXPLORATÒRIA DE DADES (EDA)")
@@ -45,7 +45,7 @@ print(df[TARGET_COL].describe())
 
 fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
-axes[0].hist(df[TARGET_COL], bins=20, color='steelblue', edgecolor='white')
+axes[0].hist(df[TARGET_COL], bins=20, color='teal', edgecolor='white')
 axes[0].axvline(df[TARGET_COL].mean(), color='red', linestyle='--',
                  label=f"Mitjana = {df[TARGET_COL].mean():.2f}%")
 axes[0].set_title('Distribució del Yield (%)')
@@ -54,18 +54,19 @@ axes[0].set_ylabel('Freqüència')
 axes[0].legend()
 
 axes[1].boxplot(df[TARGET_COL], vert=True, patch_artist=True,
-                 boxprops=dict(facecolor='steelblue', alpha=0.7))
+                 boxprops=dict(facecolor='teal', alpha=0.7))
 axes[1].set_title('Boxplot del Yield (%)')
 axes[1].set_ylabel('Yield (%)')
 
 plt.tight_layout()
 plt.savefig("figures/01_distribucio_yield.png", dpi=150)
 plt.show()
-print("\n→ Figura guardada: figures/01_distribucio_yield.png")
+print("\n Figura guardada: figures/01_distribucio_yield.png")
 
 # 2.2 Detecció d'outliers (mètode IQR)
 # Identifica lots amb un Yield anormalment baix o alt respecte a la resta,
 # que poden indicar incidents de procés a revisar.
+
 Q1 = df[TARGET_COL].quantile(0.25)
 Q3 = df[TARGET_COL].quantile(0.75)
 IQR = Q3 - Q1
@@ -92,13 +93,13 @@ top_corr = corr_matrix[TARGET_COL].abs().sort_values(ascending=False)
 top_vars = top_corr.head(16).index.tolist()  # 15 variables + Yield
 
 plt.figure(figsize=(12, 10))
-sns.heatmap(df[top_vars].corr(), annot=True, fmt='.2f', cmap='coolwarm',
+sns.heatmap(df[top_vars].corr(), annot=True, fmt='.2f', cmap='viridis',
             center=0, square=True, linewidths=0.5, annot_kws={"size": 8})
 plt.title('Matriu de Correlació – Top 15 variables + Yield')
 plt.tight_layout()
 plt.savefig("figures/02_correlacio.png", dpi=150)
 plt.show()
-print("\n→ Figura guardada: figures/02_correlacio.png")
+print("\n Figura guardada: figures/02_correlacio.png")
 
 print(f"\nTop 10 variables més correlacionades amb {TARGET_COL}:")
 print(top_corr.iloc[1:11].to_string())  # [0] és Yield amb ell mateix (=1.0)
@@ -112,7 +113,7 @@ fig, axes = plt.subplots(2, 2, figsize=(12, 10))
 axes = axes.flatten()
 
 for i, var in enumerate(top4_vars):
-    axes[i].scatter(df[var], df[TARGET_COL], alpha=0.6, color='steelblue',
+    axes[i].scatter(df[var], df[TARGET_COL], alpha=0.6, color='teal',
                      edgecolors='white')
     axes[i].set_xlabel(var)
     axes[i].set_ylabel(TARGET_COL)
@@ -121,7 +122,7 @@ for i, var in enumerate(top4_vars):
 plt.tight_layout()
 plt.savefig("figures/03_dispersio_top_variables.png", dpi=150)
 plt.show()
-print("\n→ Figura guardada: figures/03_dispersio_top_variables.png")
+print("\n Figura guardada: figures/03_dispersio_top_variables.png")
 
 # 2.6 Resum final de l'EDA
 print("\n" + "=" * 60)
