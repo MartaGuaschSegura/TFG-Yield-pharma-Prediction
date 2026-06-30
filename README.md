@@ -27,6 +27,7 @@ Estructura del repositori
     - preparacio_ml.py ← Preparació per a ML
     - entrenament_models.py ← Entrenament i avaluació de 6 models de regressió amb 5-fold CV
     - optimitzacio.py ← Optimitzacio d'hiperparàmetres SVR i RF amb RandomizedSearchCV
+    - interpretabilitat.py ← interpretabilitat i visualitzacions finals
   - figures/ ← Figures generades automàticament pel codi
   - .gitignore
   - requirements.txt (pendent de veure si ho faig)
