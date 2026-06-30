@@ -13,8 +13,8 @@ Estat actual del projecte
 - [OK] Preparació per a Machine Learning (split 80/10/10, imputació, estandardització)
 - [OK] Entrenament i avaluació de models de regressió 
 - [OK] Optimització d'hiperparàmetres
-- Interpretabilitat del model (Feature Importance / Permutation Importance)
-- Visualitzacions finals
+- [OK] Interpretabilitat del model (Feature Importance / Permutation Importance)
+- [OK] Visualitzacions finals
   
 Estructura del repositori
 - tfg-yield-prediction/
