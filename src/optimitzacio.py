@@ -53,10 +53,10 @@ print("2. OPTIMITZACIÓ SVR")
 print("=" * 60)
 
 param_svr = {
-    'C': uniform(0.01, 100), # rang: 0.01 --> 100
-    'epsilon': uniform(0.01, 2.0), # rang: 0.01 --> 2.01
-    'gamma':['scale', 'auto'] + list(uniform(0.001, 0.5).rvs(5, random_state=RANDOM_STATE)),
-    'kernel':['rbf', 'linear'],
+    'C': uniform(0.01, 100), # penalització, controla quant es penalitzen els errors
+    'epsilon': uniform(0.01, 2.0), # com més gran, més tolerant és el model amb els errors petits.
+    'gamma':['scale', 'auto'] + list(uniform(0.001, 0.5).rvs(5, random_state=RANDOM_STATE)), # Gamma baix → cada punt influeix molt → model més suau
+    'kernel':['rbf', 'linear'], #  la funció matemàtica que usa el SVR per transformar les dades. RBF (Radial Basis Function
 }
 
 search_svr = RandomizedSearchCV(
@@ -91,12 +91,12 @@ print("3. OPTIMITZACIÓ RANDOM FOREST")
 print("=" * 60)
 
 param_rf = {
-    'n_estimators': randint(50, 500),
-    'max_depth': [None, 3, 5, 7, 10, 15],
-    'min_samples_split': randint(2, 20),
-    'min_samples_leaf': randint(1, 10),
-    'max_features': ['sqrt', 'log2', 0.5, 0.8],
-    'bootstrap': [True, False],
+    'n_estimators': randint(50, 500),# nombre d'arbres de decisió que formen el bosc. Més arbres → més robust, però més lent
+    'max_depth': [None, 3, 5, 7, 10, 15], # profunditat màxima de cada arbre. Arbres molt profunds memoritzen el train (sobreajustament)
+    'min_samples_split': randint(2, 20), # mínim de mostres necessàries per dividir un node. Valors alts → arbres més simples
+    'min_samples_leaf': randint(1, 10), # mínim de mostres que ha de tenir una fulla final. Evita que el model crei fulles amb molt pocs lots
+    'max_features': ['sqrt', 'log2', 0.5, 0.8], #nombre de variables que considera cada arbre en cada divisió
+    'bootstrap': [True, False], #si cada arbre s'entrena sobre una mostra aleatòria amb reemplaçament (True) o sobre tot el dataset (False)
 }
 
 search_rf = RandomizedSearchCV(
