@@ -30,6 +30,9 @@ y_train = pd.read_csv("data/processed/y_train.csv").squeeze()
 y_val   = pd.read_csv("data/processed/y_val.csv").squeeze()
 y_test  = pd.read_csv("data/processed/y_test.csv").squeeze()
 
+print("Mitjana Yield train:", y_train.mean())
+print("Valors reals Yield test:", list(y_test)) #dades per calcular el naïf
+
 print(f"Train: {X_train.shape[0]} lots | Val: {X_val.shape[0]} | Test: {X_test.shape[0]}")
 print(f"Features: {X_train.shape[1]}")
 
