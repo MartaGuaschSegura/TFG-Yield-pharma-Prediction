@@ -73,7 +73,7 @@ y_test.to_csv("data/processed/y_test.csv", index=False)
  
 joblib.dump(imputer, "models/imputer.pkl")
 
-# 3. EXPLORACIÓ DEL VALOR DE K
+# 4. EXPLORACIÓ DEL VALOR DE K
 # Provem diferents valors de k i comparem el R2 mitjà en validació creuada de 5 plecs, per justificar quin nombre de features triem. El Pipeline garanteix que el SelectKBest s'ajusta per separat a cada fold (sense leakage).
 print("\n" + "=" * 60)
 print("3. EXPLORACIÓ DEL VALOR DE K")
@@ -99,7 +99,7 @@ print(f"\nMillor k trobat segons R2 mitja CV: k={millor_k}")
  
 K_FEATURES = millor_k
 
-# 4. SELECCIÓ DE FEATURES I ESCALAT (SelectKBest, fitejada sobre train)
+# 5. SELECCIÓ DE FEATURES I ESCALAT (SelectKBest, fitejada sobre train)
 # Aquest bloc NOMÉS serveix per veure per pantalla i documentar a la memòria quines són les 15 variables més rellevants quan es fa servir tot el train disponible. NO és el selector que fa servir realment el  model: aquell està dins del Pipeline de entrenament_models.py i optimitzacio.py, ajustat per separat a cada fold de la validació creuada per evitar data leakage.
 print("\n" + "=" * 60)
 print(f"4. SELECCIO DE FEATURES INFORMATIVA (SelectKBest, k={K_FEATURES})")
