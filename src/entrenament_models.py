@@ -38,7 +38,8 @@ print("2. ENTRENAMENT I AVALUACIO DELS MODELS (amb Pipeline)")
 print("=" * 60)
  
 def make_pipeline_scaled(model):
-    """Selector + escalat + model. Per a models sensibles a l'escala."""
+    """Selector + escalat + model. Per a models sensibles a l'escala
+    (Regressió Lineal, Ridge, Lasso, SVR)."""
     return Pipeline([
         ("selector", SelectKBest(f_regression, k=K_FEATURES)),
         ("scaler", StandardScaler()),
@@ -46,12 +47,13 @@ def make_pipeline_scaled(model):
     ])
  
 def make_pipeline_raw(model):
-    """Selector + model, sense escalat. Per a models basats en arbres."""
+    """Selector + model, sense escalat. Els arbres de decisió no
+    necessiten escalat perquè només comparen llindars per variable."""
     return Pipeline([
         ("selector", SelectKBest(f_regression, k=K_FEATURES)),
         ("model", model),
     ])
-    
+ 
 # Models sensibles a l'escala: necessiten variables amb magnituds comparables
 models_scaled = {
     "Linear Regression": make_pipeline_scaled(LinearRegression()),
@@ -59,14 +61,14 @@ models_scaled = {
     "Lasso": make_pipeline_scaled(Lasso(alpha=0.1)),
     "SVR": make_pipeline_scaled(SVR(kernel='rbf', C=1.0, epsilon=0.1)),
 }
-# Models basats en forest: no necessiten escalat (Random Forest, Gradient Boosting)
+# Models basats en arbres: no necessiten escalat (Random Forest, Gradient Boosting)
 models_raw = {
     "Random Forest":     make_pipeline_raw(RandomForestRegressor(n_estimators=100, random_state=RANDOM_STATE)),
     "Gradient Boosting": make_pipeline_raw(GradientBoostingRegressor(n_estimators=100, random_state=RANDOM_STATE)),
 }
-
-# Calcula R², MAE i RMSE per a un model concret.
+ 
 def evaluate(y_true, y_pred, name):
+    """Calcula R², MAE i RMSE per a un model concret."""
     r2   = r2_score(y_true, y_pred)
     mae  = mean_absolute_error(y_true, y_pred)
     rmse = np.sqrt(mean_squared_error(y_true, y_pred))
@@ -74,18 +76,18 @@ def evaluate(y_true, y_pred, name):
             "MAE": round(mae, 4), "RMSE": round(rmse, 4)}
  
 # 5-fold cross-validation sobre train -- ara SENSE leakage:
-# cada fold ajusta el seu propi scaler dins del Pipeline.
+# cada fold ajusta el seu propi selector/scaler dins del Pipeline.
 cv = KFold(n_splits=5, shuffle=True, random_state=RANDOM_STATE)
  
 results = []
-all_pipelines = {**models_scaled, **models_raw} # els 6 models junts
+all_pipelines = {**models_scaled, **models_raw}  # els 6 models junts
  
 for name, pipe in all_pipelines.items():
-     # Entrenem amb tot el train i avaluem sobre validation
+    # Entrenem amb tot el train i avaluem sobre validation
     pipe.fit(X_train, y_train)
     y_pred_val = pipe.predict(X_val)
     metrics = evaluate(y_val, y_pred_val, name)
-
+ 
     # A més, fem 5-fold CV sobre train per veure com de robust és el model
     cv_scores = cross_val_score(pipe, X_train, y_train, cv=cv, scoring='r2')
     metrics["CV R² mitjà"] = round(cv_scores.mean(), 4)
@@ -95,7 +97,7 @@ for name, pipe in all_pipelines.items():
     print(f"\n{name}:")
     print(f"  Val  --> R²={metrics['R²']:.4f} | MAE={metrics['MAE']:.4f} | RMSE={metrics['RMSE']:.4f}")
     print(f"  5-CV --> R²={metrics['CV R² mitjà']:.4f} ± {metrics['CV R² std']:.4f}")
- 
+    
 # 4.3. TAULA RESUM COMPARATIVA
 print("\n" + "=" * 60)
 print("3. TAULA RESUM (ordenada per R² Validation)")
@@ -137,23 +139,24 @@ plt.suptitle("Comparació de models – Validation Set\n(el millor en color cora
 plt.tight_layout()
 plt.savefig("figures/04_comparativa_models.png", dpi=150)
 plt.show()
-plt.figure(figsize=(10, 5))
-
-# CV R²: els models lineals (Regressió Lineal, Ridge, Lasso) tenen valors negatius per la inestabilitat numerica comentada abans.
-# Es retallen visualment a -1.0
+ 
+# CV R²: els models lineals es clipegen visualment per no distorsionar
+# l'escala (veure nota metodologica mes amunt); s'anota el valor real
+# FORA de la barra (a la dreta, en zona blanca) perque es llegeixi be.
+fig2, ax2 = plt.subplots(figsize=(10, 5.5))
 cv_means = results_df["CV R² mitjà"].clip(lower=-1.0)
 cv_stds  = results_df["CV R² std"].clip(upper=1.0)
-plt.barh(results_df.index, cv_means, xerr=cv_stds,
+ax2.barh(results_df.index, cv_means, xerr=cv_stds,
          color=colors, edgecolor='white', capsize=4)
-
-# Anotem el valor real nomes per als models retallats
+ax2.set_xlim(-2.3, 0.5)
 for i, (name, val) in enumerate(results_df["CV R² mitjà"].items()):
     if val < -1.0:
-        plt.text(-0.98, i, f"  (real: {val:.0f})", va='center', fontsize=8, color='dimgray')
-
-plt.title("R² mitjà – 5-Fold Cross-Validation sobre Train\n" "(barres d'error = desviació estàndard entre plecs; Pipeline sense leakage)")
-plt.xlabel("R² mitjà CV")
-plt.axvline(0, color='gray', linestyle='--', linewidth=0.8)
+        ax2.text(0.05, i, f"valor real: {val:,.0f}", va='center', ha='left',
+                  fontsize=8.5, color='dimgray', style='italic')
+ax2.set_title("R² mitjà – 5-Fold Cross-Validation sobre Train\n"
+              "(barres d'error = desviació estàndard entre plecs; Pipeline sense leakage)")
+ax2.set_xlabel("R² mitjà CV")
+ax2.axvline(0, color='gray', linestyle='--', linewidth=0.8)
 plt.tight_layout()
 plt.savefig("figures/05_cv_comparativa.png", dpi=150)
 plt.show()
