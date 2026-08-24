@@ -14,9 +14,7 @@ os.makedirs("data/raw", exist_ok=True)
 RANDOM_STATE = 42
 
 # 1. CÀRREGA DEL DATASET
-# El fitxer prové de l'extracció EBR. Usa ';' com a
-# separador de columnes; els decimals venen amb punt (no calen ajustos
-# addicionals de 'decimal').
+# El fitxer prové de l'extracció EBR. Usa ';' com a separador de columnes; els decimals venen amb punt (no calen ajustos addicionals de 'decimal').
 
 print("=" * 60)
 print("1. CÀRREGA DEL DATASET")
@@ -43,10 +41,8 @@ print(df[TARGET_COL].describe())
 
 # 3. NETEJA I PREPROCESSAMENT
 # El dataset original té tres tipus de columnes a tractar de manera diferent:
-#   a) Dates (Start/End de cada operació + DateTime Check Solution +
-#      BATCH_CLOSURE_DATETIME) -> es transformen en durades numèriques (minuts).
-#   b) Columnes numèriques de procés (pressions, temperatures, agitació,
-#      càrregues en kg) -> es mantenen tal qual.
+#   a) Dates (Start/End de cada operació + DateTime Check Solution + BATCH_CLOSURE_DATETIME) -> es transformen en durades numèriques (minuts).
+#   b) Columnes numèriques de procés (pressions, temperatures, agitació, càrregues en kg) -> es mantenen tal qual.
 #   c) Identificador de lot (OF) -> es manté apart, no és una feature.
 
 print("\n" + "=" * 60)
@@ -56,8 +52,7 @@ print("=" * 60)
 df_clean = df.copy()
 
 # 3.1 Conversió de totes les columnes de data a datetime
-# Deta pel nom: "Start", "End", "DateTime"
-# o "CLOSURE". Format real del fitxer: dd/mm/yyyy H:MM (dayfirst=True).
+# Deta pel nom: "Start", "End", "DateTime" o "CLOSURE". Format real del fitxer: dd/mm/yyyy H:MM (dayfirst=True).
 date_keywords = ['Start', 'End', 'DateTime', 'CLOSURE']
 date_cols = [c for c in df_clean.columns
              if any(k in c for k in date_keywords)]
@@ -76,13 +71,11 @@ print(f"\nNuls després de convertir a datetime (si n'hi ha, revisar format orig
 print(nuls_post_conversio[nuls_post_conversio > 0].to_string() or "  Cap nul nou introduït.")
 
 # 3.2 Càlcul de durades (End - Start) en minuts
-# Cobreix tant el patró estàndard "OP_N Start/End" com el cas especial
-# "OP_ACN Loading Start/End", que no segueix la numeració OP_N.
+# Cobreix tant el patró estàndard "OP_N Start/End" com el cas especial "OP_ACN Loading Start/End", que no segueix la numeració OP_N.
 start_cols = [c for c in date_cols if 'Start' in c]
 n_durades = 0
 
-# Per cada columna "Start" (inici d'una operació), busquem la seva parella
-# "End" (fi) i calculem quants minuts han passat entre totes dues.
+# Per cada columna "Start" (inici d'una operació), busquem la seva parella "End" (fi) i calculem quants minuts han passat entre totes dues.
 for s_col in start_cols:
     e_col = s_col.replace('Start', 'End')
     if e_col in df_clean.columns:
@@ -92,9 +85,7 @@ for s_col in start_cols:
 
 print(f"\nVariables de durada creades: {n_durades}")
 
-# Comprovació de durades negatives (indicarien error de registre a l'EBR,
-# per exemple Start i End intercanviats, o operacions que travessen mitjanit
-# mal registrades)
+# Comprovació de durades negatives (indicarien error de registre a l'EBR, per exemple Start i End intercanviats, o operacions que travessen mitjanit mal registrades)
 duration_cols = [i for i in df_clean.columns if 'Duration_min' in i]
 durades_negatives = (df_clean[duration_cols] < 0).sum()
 durades_negatives = durades_negatives[durades_negatives > 0]
@@ -105,14 +96,11 @@ else:
     print("\nCap durada negativa detectada.")
 
 # 3.3 Eliminem les columnes de data originals
-# Un cop calculades les durades, les dates en format datetime no aporten
-# valor predictiu directe als models de regressió (no són numèriques).
+# Un cop calculades les durades, les dates en format datetime no aporten valor predictiu directe als models de regressió (no són numèriques).
 df_clean.drop(columns=date_cols, inplace=True)
 
 # 3.4 Comprovació de columnes amb > 50% de valors nuls
-# En aquest dataset concret pràcticament no n'hi ha (el procés EBR és
-# consistent), però es manté la comprovació per robustesa davant futures
-# extraccions de dades.
+# En aquest dataset concret pràcticament no n'hi ha (el procés EBR és consistent), però es manté la comprovació per robustesa davant futures extraccions de dades.
 threshold = 0.5
 null_ratio = df_clean.isnull().mean()
 cols_to_drop = null_ratio[null_ratio > threshold].index.tolist()
@@ -120,16 +108,13 @@ print(f"\nColumnes eliminades per > 50% de nuls ({len(cols_to_drop)}): {cols_to_
 df_clean.drop(columns=cols_to_drop, inplace=True)
 
 # 3.5 Separem l'identificador de lot (OF)
-# Es manté en un DataFrame apart per poder traçar resultats fins al lot
-# original (útil per a la discussió de resultats), però NO s'utilitza
-# com a feature d'entrada al model.
+# Es manté en un DataFrame apart per poder traçar resultats fins al lot original (útil per a la discussió de resultats), però NO s'utilitza com a feature d'entrada al model.
 batch_ids = df_clean[ID_COL].copy()
 df_clean.drop(columns=[ID_COL], inplace=True)
 
 # 3.6 Eliminació de files sense valor de Yield 
 # Un lot sense Yield registrat no es pot utilitzar ni per entrenar ni per avaluar.
-files_abans = len(df_clean) # Guardem quantes files teníem abans d'esborrar, per poder informar
-# després de quants lots s'han descartat per no tenir Yield registrat.
+files_abans = len(df_clean) # Guardem quantes files teníem abans d'esborrar, per poder informar després de quants lots s'han descartat per no tenir Yield registrat.
 df_clean.dropna(subset=[TARGET_COL], inplace=True)
 print(f"\nFiles eliminades per Yield nul: {files_abans - len(df_clean)}")
 
