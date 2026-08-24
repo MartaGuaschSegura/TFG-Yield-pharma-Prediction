@@ -1,6 +1,4 @@
 #FASE 1: Càrrega del dataset + Neteja i preprocessament
-# (les fases d'EDA, modelització, optimització i interpretabilitat s'aniran
-#  afegint en propers commits)
 import os 
 import warnings
 warnings.filterwarnings('ignore')
@@ -16,8 +14,7 @@ os.makedirs("data/raw", exist_ok=True)
 RANDOM_STATE = 42
 
 # 1. CÀRREGA DEL DATASET
-# ------------------------------------------------------------------------------
-# El fitxer prové de l'extracció EBR del procés 5477-S03. Usa ';' com a
+# El fitxer prové de l'extracció EBR. Usa ';' com a
 # separador de columnes; els decimals venen amb punt (no calen ajustos
 # addicionals de 'decimal').
 
@@ -45,7 +42,6 @@ print(f"\nEstadística descriptiva de '{TARGET_COL}':")
 print(df[TARGET_COL].describe())
 
 # 3. NETEJA I PREPROCESSAMENT
-# ------------------------------------------------------------------------------
 # El dataset original té tres tipus de columnes a tractar de manera diferent:
 #   a) Dates (Start/End de cada operació + DateTime Check Solution +
 #      BATCH_CLOSURE_DATETIME) -> es transformen en durades numèriques (minuts).
@@ -67,11 +63,12 @@ date_cols = [c for c in df_clean.columns
              if any(k in c for k in date_keywords)]
 
 print(f"\nColumnes de data detectades ({len(date_cols)}):")
-for c in date_cols:
-    print(f"  - {c}")
+for i in date_cols:
+    print(f" - {i}")
 
 for col in date_cols:
-    df_clean[col] = pd.to_datetime(df_clean[col], dayfirst=True, errors='coerce')
+    df_clean[col] = pd.to_datetime(df_clean[col], dayfirst=True, errors='coerce') 
+    #coerce perque el programa no peti si troba un valor que no es pot convertir
 
 # Comprovem que la conversió no ha introduït nuls inesperats
 nuls_post_conversio = df_clean[date_cols].isnull().sum()
@@ -84,6 +81,8 @@ print(nuls_post_conversio[nuls_post_conversio > 0].to_string() or "  Cap nul nou
 start_cols = [c for c in date_cols if 'Start' in c]
 n_durades = 0
 
+# Per cada columna "Start" (inici d'una operació), busquem la seva parella
+# "End" (fi) i calculem quants minuts han passat entre totes dues.
 for s_col in start_cols:
     e_col = s_col.replace('Start', 'End')
     if e_col in df_clean.columns:
@@ -92,10 +91,11 @@ for s_col in start_cols:
         n_durades += 1
 
 print(f"\nVariables de durada creades: {n_durades}")
+
 # Comprovació de durades negatives (indicarien error de registre a l'EBR,
 # per exemple Start i End intercanviats, o operacions que travessen mitjanit
 # mal registrades)
-duration_cols = [c for c in df_clean.columns if 'Duration_min' in c]
+duration_cols = [i for i in df_clean.columns if 'Duration_min' in i]
 durades_negatives = (df_clean[duration_cols] < 0).sum()
 durades_negatives = durades_negatives[durades_negatives > 0]
 if len(durades_negatives) > 0:
@@ -128,21 +128,33 @@ df_clean.drop(columns=[ID_COL], inplace=True)
 
 # 3.6 Eliminació de files sense valor de Yield 
 # Un lot sense Yield registrat no es pot utilitzar ni per entrenar ni per avaluar.
-files_abans = len(df_clean)
+files_abans = len(df_clean) # Guardem quantes files teníem abans d'esborrar, per poder informar
+# després de quants lots s'han descartat per no tenir Yield registrat.
 df_clean.dropna(subset=[TARGET_COL], inplace=True)
 print(f"\nFiles eliminades per Yield nul: {files_abans - len(df_clean)}")
 
 # 3.7 Comprovació final de tipus
-# Totes les columnes restants haurien de ser numèriques (int o float).
+# Totes les columnes restants han de ser numèriques (int o float).
 non_numeric = df_clean.select_dtypes(exclude=[np.number]).columns.tolist()
+
 if non_numeric:
-    print(f"\n[AVÍS] Columnes no numèriques inesperades, revisar: {non_numeric}")
-else:
-    print("\nTotes les columnes restants són numèriques. OK")
+    print(f"\n[AVÍS] Columnes no numèriques, revisar: {non_numeric}")
 
 print(f"\nDataset net final: {df_clean.shape[0]} lots x {df_clean.shape[1]} variables")
 print(f"(+ {len(batch_ids)} identificadors de lot guardats apart per a traçabilitat)")
 
+cols_mostrar = [
+    'Yield (%)',
+    'OP_1 Min Agitation (rpm)',
+    'OP_1 Duration_min',
+    'OP_14 Duration_min',
+    'OP_16 Duration_min',
+    'OP_17 Duration_min',
+    'Quantity 5477-S00 (kg)',
+    'OP8_0727M_LOADED'
+]
+
+print(df_clean[cols_mostrar].head(5))
+
 # Guardem el dataset processat per a la següent fase (EDA / modelització)
 df_clean.to_csv("/Users/martaguasch/Desktop/TFG/data/processed/dataset_net.csv", index=False)
-#print("\n→ Dataset net guardat a: data/processed/dataset_net.csv")
