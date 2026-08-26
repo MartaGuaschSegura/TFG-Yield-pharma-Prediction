@@ -35,7 +35,7 @@ tfg-yield-prediction/
 │   └── interpretabilitat.py    ← Interpretabilitat i visualitzacions finals
 ├── figures/           ← Figures generades automàticament pel codi
 ├── .gitignore
-├── requirements.txt (pendent de veure si ho faig)
+├── requirements.txt
 └── README.md
 ```
 
