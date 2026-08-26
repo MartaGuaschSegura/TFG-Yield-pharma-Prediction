@@ -37,6 +37,28 @@ tfg-yield-prediction/
 ├── .gitignore
 ├── requirements.txt
 └── README.md
+Com executar el pipeline
+
+Els scripts s'han d'executar en aquest ordre, des de la carpeta arrel del repositori:
+
+install requirements.txt
+
+python src/preprocessament.py
+python src/eda.py
+python src/preparacio_ml.py
+python src/entrenament_models.py
+python src/optimitzacio.py
+python src/interpretabilitat.py
+
+Requisit previ: cal col·locar el fitxer CSV original de l'EBR a data/raw/ (no s'inclou en aquest repositori per confidencialitat).
+
+Script	Genera	Carpeta de sortida
+preprocessament.py	Dataset net (dates convertides a durades, sense outliers de format)	data/processed/dataset_net.csv
+eda.py	Figures exploratòries (distribució, correlacions, dispersió)	figures/01-03
+preparacio_ml.py	Split train/val/test, imputació, exploració de k	data/processed/X_*_imp.csv, data/processed/y_*.csv
+entrenament_models.py	Comparació de 6 models baseline	figures/04-05, models/best_model_baseline.pkl
+optimitzacio.py	Model final optimitzat (SVR)	figures/06, models/model_final.pkl
+interpretabilitat.py	Permutation Importance, predicció vs real, residus	figures/08-10
 ```
 
 ## Dades
