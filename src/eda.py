@@ -17,7 +17,7 @@ print("=" * 60)
 print("1. CÀRREGA DEL DATASET NET")
 print("=" * 60)
 
-CSV_PATH = "/Users/martaguasch/Desktop/TFG/Netea i preprocessament/data/processed/dataset_net.csv"
+CSV_PATH = "data/processed/dataset_net.csv"
 TARGET_COL = "Yield (%)"
 
 df = pd.read_csv(CSV_PATH)
