@@ -20,7 +20,7 @@ print("=" * 60)
 print("1. CÀRREGA DEL DATASET")
 print("=" * 60)
 
-CSV_PATH = "/Users/martaguasch/Desktop/TFG/DATA EXTRACTION 5477-S03 (1).csv"
+CSV_PATH = "DATA EXTRACTION 5477-S03 (1).csv"
 TARGET_COL = "Yield (%)" # objectiu
 ID_COL = "OF" # Identificador únic de cada lot (Ordre de Fabricació)
 
@@ -142,4 +142,4 @@ cols_mostrar = [
 print(df_clean[cols_mostrar].head(5))
 
 # Guardem el dataset processat per a la següent fase (EDA / modelització)
-df_clean.to_csv("/Users/martaguasch/Desktop/TFG/data/processed/dataset_net.csv", index=False)
+df_clean.to_csv("data/processed/dataset_net.csv", index=False)
