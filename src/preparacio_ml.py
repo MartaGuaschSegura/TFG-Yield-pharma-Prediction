@@ -22,7 +22,7 @@ print("=" * 60)
 TARGET_COL   = "Yield (%)"
 LEAKAGE_COLS = ["Obtained quantity (kg)"]
 
-df = pd.read_csv("/Users/martaguasch/Desktop/TFG/Netea i preprocessament/data/processed/dataset_net.csv")
+df = pd.read_csv("data/processed/dataset_net.csv")
 print(f"Dimensions originals: {df.shape[0]} lots x {df.shape[1]} variables")
 
 # S'eliminala variable "Obtained quantity (kg)"
