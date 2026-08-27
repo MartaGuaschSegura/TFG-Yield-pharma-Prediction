@@ -100,7 +100,7 @@ print(f"\nMillor k trobat segons R2 mitja CV: k={millor_k}")
 K_FEATURES = millor_k
 
 # 5. SELECCIÓ DE FEATURES I ESCALAT (SelectKBest, fitejada sobre train)
-# Aquest bloc NOMÉS serveix per veure per pantalla i documentar a la memòria quines són les 15 variables més rellevants quan es fa servir tot el train disponible. NO és el selector que fa servir realment el  model: aquell està dins del Pipeline de entrenament_models.py i optimitzacio.py, ajustat per separat a cada fold de la validació creuada per evitar data leakage.
+# Aquest bloc NOMÉS serveix per veure per pantalla i documentar a la memòria quines són les 19 variables més rellevants quan es fa servir tot el train disponible. NO és el selector que fa servir realment el  model: aquell està dins del Pipeline de entrenament_models.py i optimitzacio.py, ajustat per separat a cada fold de la validació creuada per evitar data leakage.
 print("\n" + "=" * 60)
 print(f"4. SELECCIO DE FEATURES INFORMATIVA (SelectKBest, k={K_FEATURES})")
 print("=" * 60)
