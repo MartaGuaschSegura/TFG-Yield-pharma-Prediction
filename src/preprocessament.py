@@ -20,7 +20,7 @@ print("=" * 60)
 print("1. CÀRREGA DEL DATASET")
 print("=" * 60)
 
-CSV_PATH = "DATA EXTRACTION 5477-S03 (1).csv"
+CSV_PATH = "data/raw/DATA EXTRACTION 5477-S03 (1).csv"
 TARGET_COL = "Yield (%)" # objectiu
 ID_COL = "OF" # Identificador únic de cada lot (Ordre de Fabricació)
 
