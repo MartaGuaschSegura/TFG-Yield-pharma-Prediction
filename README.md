@@ -42,7 +42,7 @@ tfg-yield-prediction/
 
 Els scripts s'han d'executar en aquest ordre, des de la carpeta arrel del repositori:
 ```
-install requirements.txt
+pip install -r requirements.txt
 
 python src/preprocessament.py
 python src/eda.py
